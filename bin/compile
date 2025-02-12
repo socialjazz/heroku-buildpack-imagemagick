@@ -4,7 +4,7 @@ indent() {
   sed -u 's/^/       /'
 }
 
-echo "-----> Install ImageMagick"
+echo "-----> Installing ImageMagick"
 
 BUILD_DIR=$1
 CACHE_DIR=$2
@@ -12,8 +12,19 @@ ENV_DIR=$3
 VENDOR_DIR="$BUILD_DIR/vendor"
 INSTALL_DIR="$VENDOR_DIR/imagemagick"
 
-# Read IMAGE_MAGICK_VERSION from ENV_DIR
+# Try to read the IMAGE_MAGICK_VERSION from the ENV_DIR
 IMAGE_MAGICK_VERSION=$(< "$ENV_DIR/IMAGE_MAGICK_VERSION")
+DEFAULT_IMAGE_MAGICK_VERSION="7.0.5-10"
+
+# If IMAGE_MAGICK_VERSION is not set, then use the default version
+if [ "$IMAGE_MAGICK_VERSION" ]; then
+  echo "-----> Using ImageMagick version $IMAGE_MAGICK_VERSION"
+else
+  echo "-----> IMAGE_MAGICK_VERSION not set. Using default version $DEFAULT_IMAGE_MAGICK_VERSION"
+  IMAGE_MAGICK_VERSION=$DEFAULT_IMAGE_MAGICK_VERSION
+fi
+
+# Check if the requested version of ImageMagick is available in the build cache
 CACHE_FILE="$CACHE_DIR/imagemagick-$IMAGE_MAGICK_VERSION.tar.gz"
 
 if [ ! -f $CACHE_FILE ]; then
