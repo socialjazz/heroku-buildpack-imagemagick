@@ -3,21 +3,25 @@ heroku-buildpack-imagemagick
 
 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for vendoring the ImageMagick binaries into your project.
 
-This one actually works :)
+## Install
 
-### Install
-
-In your project root:
+Add the buildpack to your app...
 
 `heroku buildpacks:add https://github.com/socialjazz/heroku-buildpack-imagemagick  --index 1 --app HEROKU_APP_NAME`
 
-"index 1" means that imagemagick will be installed first.
+_Note: The `--index 1` puts that imagemagick buildpack first._
 
-### Changing version
-Go to https://www.imagemagick.org/download/releases and find a version you want (*.tar.gz). Edit the `bin/compile` file and change out the version number. Clear cache, as shown below, and redeploy your app to Heroku.
+## Setting / Changing the Version
 
-### Clear cache
-Since the installation is cached you might want to clean it out due to config changes.
+1. Go to https://www.imagemagick.org/download/releases and find the version number that you want (*.tar.gz).
+2. Set the config on your app: `heroku config:set IMAGE_MAGICK_VERSION=6.9.13-16 -a HEROKU_APP_NAME`
+3. Redeploy your app to Heroku to trigger the install
 
-1. `heroku plugins:install heroku-repo`
-2. `heroku repo:purge_cache -app HEROKU_APP_NAME`
+---
+
+### Cache Issue
+
+If there is an issue with a bad build of ImageMagick getting stuck in the build cache, the following command will purge the cache and allow for a fresh build -- that first build will run much slower.
+
+1. `heroku plugins:install heroku-builds`
+2. `heroku builds:cache:purge -a HEROKU_APP_NAME`
